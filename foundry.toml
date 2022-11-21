@@ -1,0 +1,9 @@
+[profile.default]
+src = 'src'
+out = 'out'
+libs = ['lib']
+solc = "0.8.13"
+rpc-url = "https://goerli.infura.io/v3/360a5fb5846141198033f1d79ccd9b67"
+
+
+# See more config options https://github.com/foundry-rs/foundry/tree/master/config
