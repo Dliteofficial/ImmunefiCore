@@ -21,11 +21,16 @@ contract VaultTest is Test {
 
     function testExploit () public {
         vm.startPrank(vault.owner());
-        vault.payWhitehat
-        (bytes32(0), payable(address(this)), [[
+        
+        bytes memory payload = 
+        abi.encodeWithSignature("payWhitehat(bytes32,address,address[],uint256,uint256)", bytes32(0), address(this), [[
             "0xdAC17F958D2ee523a2206206994597C13D831ec7",
             "1e18"
         ]], 1 ether, 100000);
+
+        (bool success, ) = address(vault).call(payload);
+        require(success);
+
         vm.stopPrank();
 
         assertEq(vault.isPausedOnImmunefi(), true);
